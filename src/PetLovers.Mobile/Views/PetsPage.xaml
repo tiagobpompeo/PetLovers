@@ -32,7 +32,8 @@
         </Grid>
 
         <!-- Busca -->
-        <SearchBar Grid.Row="1" Placeholder="Buscar pet, raça, tutor…" Text="{Binding Busca}"/>
+        <SearchBar Grid.Row="1" Placeholder="Buscar pet, raça, tutor…" Text="{Binding Busca}"
+                   BackgroundColor="Transparent" PlaceholderColor="#6b7f78" TextColor="#1a2b26"/>
 
         <!-- Lista -->
         <RefreshView Grid.Row="2" IsRefreshing="{Binding Carregando}" Command="{Binding CarregarCommand}">
