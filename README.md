@@ -2,6 +2,20 @@
 
 Sistema de cadastro e gestão de pets em uma única solution .NET, com API REST, portal web HTML e app mobile .NET MAUI (Android e iOS).
 
+> Projeto de demonstração: uma única base C# servindo web, mobile e API, com dados de exemplo fictícios criados automaticamente na primeira execução.
+
+## Screenshots
+
+### Portal Web (HTML + API REST)
+![Portal web com dashboard e listagem de pets](docs/images/web-portal.png)
+
+### App Mobile (.NET MAUI — Android)
+| Lista (emulador) | Cadastro | Tema escuro (dispositivo físico) |
+|---|---|---|
+| ![Lista de pets](docs/images/mobile-lista.png) | ![Formulário de cadastro](docs/images/mobile-form.png) | ![Tema escuro](docs/images/mobile-dark-device.png) |
+
+*Imagens reais da aplicação rodando: portal em `localhost:5155`, app em emulador Pixel 8 Pro (API 35) e em um Moto G(9) Play físico — todos consumindo a mesma API.*
+
 ## Estrutura
 
 ```
@@ -18,20 +32,25 @@ PetLovers.slnx
 
 ## Pré-requisitos
 
-- .NET 10 SDK
-- Workload MAUI: `dotnet workload install maui`
-- SQL Server (opcional — por padrão usa SQLite local)
+| Para rodar | Precisa de |
+|---|---|
+| API + site web | Apenas o [.NET 10 SDK](https://dotnet.microsoft.com/download) |
+| App Android | Workload MAUI (`dotnet workload install maui`) + Android SDK (instalado junto com o Android Studio) |
+| App iOS | Mac com Xcode |
+| SQL Server | Opcional — por padrão usa SQLite local, zero configuração |
 
 ## Como rodar
 
-### API + Site Web
+### 1. Clonar e rodar a API + Site Web (funciona em qualquer máquina com .NET 10)
 ```bash
+git clone https://github.com/tiagobpompeo/PetLovers.git
+cd PetLovers
 dotnet run --project src/PetLovers.API --launch-profile http
 ```
 - Portal web: http://localhost:5155
 - Swagger: http://localhost:5155/swagger
 
-O banco é criado e populado automaticamente (seed) na primeira execução.
+O banco SQLite é criado e populado automaticamente (seed com dados fictícios) na primeira execução — **não há nenhum passo manual de banco de dados**.
 
 ### Banco de dados
 
@@ -43,7 +62,10 @@ Por padrão usa **SQLite** (`petlovers.db`). Para usar **SQL Server**, em
 "ConnectionStrings": { "SqlServer": "Server=...;Database=PetLovers;..." }
 ```
 
-### App Mobile (.NET MAUI)
+### 2. App Mobile (.NET MAUI)
+
+Com a API rodando (passo 1) e um emulador aberto ou dispositivo conectado (`adb devices` para conferir):
+
 ```bash
 # Android — emulador (o app usa http://10.0.2.2:5155 automaticamente)
 dotnet build src/PetLovers.Mobile -f net10.0-android -t:Run -p:AdbTarget="-s emulator-5554"
@@ -57,10 +79,14 @@ dotnet build src/PetLovers.Mobile -f net10.0-ios -t:Run
 ```
 A detecção é automática (`DeviceInfo.DeviceType == Virtual` → emulador). Use `adb devices` para obter o serial. Com múltiplos dispositivos conectados, `-p:AdbTarget` escolhe o alvo.
 
-### Testes
+### 3. Testes
 ```bash
 dotnet test tests/PetLovers.UnitTests
 ```
+
+### Rodando no Rider / Visual Studio
+
+Abra `PetLovers.slnx`, selecione o perfil **`PetLovers.API: http`** e execute. Para o mobile, selecione `PetLovers.Mobile` e escolha o dispositivo no seletor. O arquivo `src/PetLovers.API/PetLovers.http` tem todas as requisições da API prontas para testar no HTTP Client do IDE.
 
 ## API REST — principais endpoints
 
