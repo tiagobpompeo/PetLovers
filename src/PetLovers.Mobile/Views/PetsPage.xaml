@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PetLovers.Mobile.ViewModels"
+             xmlns:m="clr-namespace:PetLovers.Mobile.Models"
+             x:Class="PetLovers.Mobile.Views.PetsPage"
+             x:DataType="vm:PetsViewModel"
+             Title="🐾 PetLovers">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="14" RowSpacing="10">
+
+        <!-- Dashboard -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <Border Grid.Column="0" StrokeShape="RoundRectangle 12" Padding="10" BackgroundColor="#e3efeb">
+                <VerticalStackLayout>
+                    <Label Text="{Binding Dashboard.TotalPets}" FontSize="22" FontAttributes="Bold" TextColor="#0d7a5f"/>
+                    <Label Text="Pets" FontSize="11" TextColor="#6b7f78"/>
+                </VerticalStackLayout>
+            </Border>
+            <Border Grid.Column="1" StrokeShape="RoundRectangle 12" Padding="10" BackgroundColor="#e3efeb">
+                <VerticalStackLayout>
+                    <Label Text="{Binding Dashboard.TotalTutores}" FontSize="22" FontAttributes="Bold" TextColor="#0d7a5f"/>
+                    <Label Text="Tutores" FontSize="11" TextColor="#6b7f78"/>
+                </VerticalStackLayout>
+            </Border>
+            <Border Grid.Column="2" StrokeShape="RoundRectangle 12" Padding="10" BackgroundColor="#fbeee0">
+                <VerticalStackLayout>
+                    <Label Text="{Binding Dashboard.VacinasPendentes}" FontSize="22" FontAttributes="Bold" TextColor="#b7791f"/>
+                    <Label Text="Vacinas pend." FontSize="11" TextColor="#6b7f78"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Busca -->
+        <SearchBar Grid.Row="1" Placeholder="Buscar pet, raça, tutor…" Text="{Binding Busca}"/>
+
+        <!-- Lista -->
+        <RefreshView Grid.Row="2" IsRefreshing="{Binding Carregando}" Command="{Binding CarregarCommand}">
+            <CollectionView ItemsSource="{Binding Pets}">
+                <CollectionView.EmptyView>
+                    <Label Text="Nenhum pet encontrado." HorizontalOptions="Center" TextColor="#6b7f78" Margin="0,40"/>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:PetDto">
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Excluir" BackgroundColor="#c0392b"
+                                               Command="{Binding ExcluirPetCommand, Source={RelativeSource AncestorType={x:Type vm:PetsViewModel}}}"
+                                               CommandParameter="{Binding .}"/>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            <Border StrokeShape="RoundRectangle 12" Padding="12" Margin="0,4" BackgroundColor="White" Stroke="#dfe8e5">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding EditarPetCommand, Source={RelativeSource AncestorType={x:Type vm:PetsViewModel}}}"
+                                        CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Label Grid.Column="0" Text="{Binding Emoji}" FontSize="28" VerticalOptions="Center"/>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding Nome}" FontAttributes="Bold" FontSize="16" TextColor="#1a2b26"/>
+                                        <Label Text="{Binding Subtitulo}" FontSize="12" TextColor="#6b7f78"/>
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2" Text="{Binding PesoKg, StringFormat='{0} kg'}"
+                                           FontSize="12" TextColor="#0d7a5f" VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Botão flutuante -->
+        <Button Grid.Row="2" Text="＋" FontSize="24" WidthRequest="56" HeightRequest="56"
+                CornerRadius="28" BackgroundColor="#0d7a5f" TextColor="White"
+                HorizontalOptions="End" VerticalOptions="End" Margin="0,0,8,8"
+                Command="{Binding NovoPetCommand}"/>
+    </Grid>
+</ContentPage>

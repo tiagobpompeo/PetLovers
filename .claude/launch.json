@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "petlovers-api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "src/PetLovers.API", "--launch-profile", "http"],
+      "port": 5155
+    }
+  ]
+}

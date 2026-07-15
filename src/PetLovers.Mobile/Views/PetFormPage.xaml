@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PetLovers.Mobile.ViewModels"
+             x:Class="PetLovers.Mobile.Views.PetFormPage"
+             x:DataType="vm:PetFormViewModel"
+             Title="{Binding Titulo}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18" Spacing="12">
+
+            <Label Text="Nome *" FontSize="12" TextColor="#6b7f78"/>
+            <Entry Text="{Binding Nome}" Placeholder="Nome do pet"/>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                    <Label Text="Espécie" FontSize="12" TextColor="#6b7f78"/>
+                    <Picker ItemsSource="{x:Static vm:PetFormViewModel.Especies}" SelectedItem="{Binding Especie}"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Sexo" FontSize="12" TextColor="#6b7f78"/>
+                    <Picker ItemsSource="{x:Static vm:PetFormViewModel.Sexos}" SelectedItem="{Binding Sexo}"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                    <Label Text="Raça" FontSize="12" TextColor="#6b7f78"/>
+                    <Entry Text="{Binding Raca}"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Cor" FontSize="12" TextColor="#6b7f78"/>
+                    <Entry Text="{Binding Cor}"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <VerticalStackLayout Grid.Column="0" Spacing="6">
+                    <Label Text="Nascimento" FontSize="12" TextColor="#6b7f78"/>
+                    <DatePicker Date="{Binding DataNascimento}"/>
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Peso (kg)" FontSize="12" TextColor="#6b7f78"/>
+                    <Entry Text="{Binding PesoKg}" Keyboard="Numeric"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Label Text="Microchip" FontSize="12" TextColor="#6b7f78"/>
+            <Entry Text="{Binding Microchip}"/>
+
+            <Label Text="Tutor *" FontSize="12" TextColor="#6b7f78"/>
+            <Picker ItemsSource="{Binding Tutores}" ItemDisplayBinding="{Binding Nome}"
+                    SelectedItem="{Binding TutorSelecionado}"/>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,16,0,0">
+                <Button Grid.Column="0" Text="Cancelar" BackgroundColor="Transparent"
+                        TextColor="#0d7a5f" BorderColor="#0d7a5f" BorderWidth="1"
+                        Command="{Binding CancelarCommand}"/>
+                <Button Grid.Column="1" Text="Salvar" BackgroundColor="#0d7a5f" TextColor="White"
+                        Command="{Binding SalvarCommand}"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

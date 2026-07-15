@@ -1,0 +1,76 @@
+### Variáveis (Rider entende este arquivo nativamente — clique no ▶ ao lado de cada requisição)
+@baseUrl = http://localhost:5155
+
+### Dashboard — indicadores
+GET {{baseUrl}}/api/dashboard
+
+### Listar todos os pets
+GET {{baseUrl}}/api/pets
+
+### Buscar pets (nome, raça, microchip ou tutor)
+GET {{baseUrl}}/api/pets?busca=rex
+
+### Detalhe de um pet
+GET {{baseUrl}}/api/pets/1
+
+### Cadastrar novo pet
+POST {{baseUrl}}/api/pets
+Content-Type: application/json
+
+{
+  "nome": "Bolt",
+  "especie": "Cachorro",
+  "sexo": "Macho",
+  "raca": "Border Collie",
+  "cor": "Preto e branco",
+  "dataNascimento": "2023-05-20",
+  "pesoKg": 18.5,
+  "microchip": "985112009999999",
+  "fotoUrl": null,
+  "tutorId": 1
+}
+
+### Atualizar pet
+PUT {{baseUrl}}/api/pets/1
+Content-Type: application/json
+
+{
+  "nome": "Rex",
+  "especie": "Cachorro",
+  "sexo": "Macho",
+  "raca": "Labrador Retriever",
+  "cor": "Caramelo",
+  "dataNascimento": "2023-07-15",
+  "pesoKg": 29.0,
+  "microchip": "985112003456789",
+  "fotoUrl": null,
+  "tutorId": 1
+}
+
+### Excluir pet
+DELETE {{baseUrl}}/api/pets/4
+
+### Registrar vacina em um pet
+POST {{baseUrl}}/api/pets/1/vacinas
+Content-Type: application/json
+
+{
+  "nome": "Gripe Canina",
+  "dataAplicacao": "2026-07-15",
+  "proximaDose": "2027-07-15"
+}
+
+### Listar tutores
+GET {{baseUrl}}/api/tutores
+
+### Cadastrar tutor
+POST {{baseUrl}}/api/tutores
+Content-Type: application/json
+
+{
+  "nome": "Ana Costa",
+  "cpf": "999.888.777-66",
+  "telefone": "(19) 96666-0003",
+  "email": "ana@email.com",
+  "endereco": "Rua Nova, 42 - Valinhos/SP"
+}

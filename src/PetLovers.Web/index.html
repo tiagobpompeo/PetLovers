@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PetLovers — Gestão de Pets</title>
+<style>
+  :root {
+    --primary: #0d7a5f; --primary-dark: #0a5c48; --bg: #f4f7f6;
+    --card: #ffffff; --text: #1a2b26; --muted: #6b7f78; --danger: #c0392b;
+    --border: #dfe8e5; --warn: #b7791f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+  header { background: var(--primary); color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 1.3rem; font-weight: 600; }
+  header .logo { font-size: 1.6rem; }
+  nav { display: flex; gap: 4px; margin-left: auto; }
+  nav button { background: transparent; border: none; color: #d8ece6; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: .95rem; }
+  nav button.active, nav button:hover { background: rgba(255,255,255,.18); color: #fff; }
+  main { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .card .num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+  .card .lbl { color: var(--muted); font-size: .85rem; margin-top: 4px; }
+  .card.alert .num { color: var(--warn); }
+  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .toolbar input { flex: 1; min-width: 220px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: .95rem; }
+  .btn { background: var(--primary); color: #fff; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: .95rem; }
+  .btn:hover { background: var(--primary-dark); }
+  .btn.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+  .btn.sm { padding: 5px 10px; font-size: .8rem; }
+  .btn.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: .92rem; }
+  th { background: #eaf2ef; color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: uppercase; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .75rem; background: #e3efeb; color: var(--primary-dark); }
+  .badge.warn { background: #fbeee0; color: var(--warn); }
+  dialog { border: none; border-radius: 14px; padding: 24px; width: min(480px, 92vw); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(0,0,0,.4); }
+  dialog h2 { margin-bottom: 16px; font-size: 1.15rem; }
+  form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  form label { display: block; font-size: .8rem; color: var(--muted); margin: 10px 0 4px; }
+  form input, form select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: .93rem; }
+  .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .hidden { display: none; }
+  .empty { text-align: center; color: var(--muted); padding: 30px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">🐾</span>
+  <h1>PetLovers</h1>
+  <nav>
+    <button id="tab-pets" class="active" onclick="showTab('pets')">Pets</button>
+    <button id="tab-tutores" onclick="showTab('tutores')">Tutores</button>
+    <button onclick="window.open('/swagger', '_blank')">API</button>
+  </nav>
+</header>
+
+<main>
+  <div class="cards" id="dashboard"></div>
+
+  <section id="sec-pets">
+    <div class="toolbar">
+      <input id="busca" placeholder="Buscar por nome, raça, microchip ou tutor…" oninput="debounceBusca()">
+      <button class="btn" onclick="abrirPetForm()">+ Novo Pet</button>
+    </div>
+    <table>
+      <thead><tr><th>Pet</th><th>Espécie / Raça</th><th>Idade</th><th>Peso</th><th>Tutor</th><th>Vacinas</th><th></th></tr></thead>
+      <tbody id="pets-body"></tbody>
+    </table>
+  </section>
+
+  <section id="sec-tutores" class="hidden">
+    <div class="toolbar">
+      <span style="flex:1"></span>
+      <button class="btn" onclick="abrirTutorForm()">+ Novo Tutor</button>
+    </div>
+    <table>
+      <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th><th>Pets</th><th></th></tr></thead>
+      <tbody id="tutores-body"></tbody>
+    </table>
+  </section>
+</main>
+
+<dialog id="dlg-pet">
+  <h2 id="dlg-pet-title">Novo Pet</h2>
+  <form id="form-pet" method="dialog">
+    <input type="hidden" id="pet-id">
+    <label>Nome *</label><input id="pet-nome" required>
+    <div class="row">
+      <div><label>Espécie</label>
+        <select id="pet-especie">
+          <option>Cachorro</option><option>Gato</option><option>Ave</option>
+          <option>Roedor</option><option>Reptil</option><option>Outro</option>
+        </select></div>
+      <div><label>Sexo</label>
+        <select id="pet-sexo"><option>Macho</option><option>Femea</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Raça</label><input id="pet-raca"></div>
+      <div><label>Cor</label><input id="pet-cor"></div>
+    </div>
+    <div class="row">
+      <div><label>Nascimento</label><input id="pet-nasc" type="date"></div>
+      <div><label>Peso (kg)</label><input id="pet-peso" type="number" step="0.01" min="0"></div>
+    </div>
+    <label>Microchip</label><input id="pet-chip">
+    <label>Tutor *</label><select id="pet-tutor" required></select>
+    <div class="dialog-actions">
+      <button type="button" class="btn ghost" onclick="dlgPet.close()">Cancelar</button>
+      <button type="submit" class="btn">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg-tutor">
+  <h2 id="dlg-tutor-title">Novo Tutor</h2>
+  <form id="form-tutor" method="dialog">
+    <input type="hidden" id="tutor-id">
+    <label>Nome *</label><input id="tutor-nome" required>
+    <div class="row">
+      <div><label>CPF</label><input id="tutor-cpf"></div>
+      <div><label>Telefone</label><input id="tutor-tel"></div>
+    </div>
+    <label>E-mail</label><input id="tutor-email" type="email">
+    <label>Endereço</label><input id="tutor-end">
+    <div class="dialog-actions">
+      <button type="button" class="btn ghost" onclick="dlgTutor.close()">Cancelar</button>
+      <button type="submit" class="btn">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+const API = '/api';
+const dlgPet = document.getElementById('dlg-pet');
+const dlgTutor = document.getElementById('dlg-tutor');
+let tutoresCache = [];
+let buscaTimer;
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' }, ...opts
+  });
+  if (!res.ok) { alert('Erro: ' + (await res.text() || res.status)); throw new Error(res.status); }
+  return res.status === 204 ? null : res.json();
+}
+
+function showTab(tab) {
+  document.getElementById('sec-pets').classList.toggle('hidden', tab !== 'pets');
+  document.getElementById('sec-tutores').classList.toggle('hidden', tab !== 'tutores');
+  document.getElementById('tab-pets').classList.toggle('active', tab === 'pets');
+  document.getElementById('tab-tutores').classList.toggle('active', tab === 'tutores');
+}
+
+async function carregarDashboard() {
+  const d = await api('/dashboard');
+  document.getElementById('dashboard').innerHTML = `
+    <div class="card"><div class="num">${d.totalPets}</div><div class="lbl">Pets cadastrados</div></div>
+    <div class="card"><div class="num">${d.totalTutores}</div><div class="lbl">Tutores</div></div>
+    <div class="card alert"><div class="num">${d.vacinasPendentes}</div><div class="lbl">Vacinas pendentes</div></div>
+    <div class="card"><div class="num">${d.aniversariantesDoMes}</div><div class="lbl">Aniversariantes do mês</div></div>`;
+}
+
+const emoji = { Cachorro: '🐶', Gato: '🐱', Ave: '🦜', Roedor: '🐹', Reptil: '🦎', Outro: '🐾' };
+
+async function carregarPets() {
+  const busca = document.getElementById('busca').value;
+  const pets = await api('/pets' + (busca ? `?busca=${encodeURIComponent(busca)}` : ''));
+  const body = document.getElementById('pets-body');
+  if (!pets.length) { body.innerHTML = '<tr><td colspan="7" class="empty">Nenhum pet encontrado.</td></tr>'; return; }
+  body.innerHTML = pets.map(p => `
+    <tr>
+      <td>${emoji[p.especie] || '🐾'} <strong>${p.nome}</strong></td>
+      <td>${p.especie}${p.raca ? ' · ' + p.raca : ''}</td>
+      <td>${p.idadeAnos != null ? p.idadeAnos + ' ano(s)' : '—'}</td>
+      <td>${p.pesoKg} kg</td>
+      <td>${p.tutorNome}</td>
+      <td>${p.vacinas.map(v => `<span class="badge ${v.pendente ? 'warn' : ''}">${v.nome}${v.pendente ? ' ⚠' : ''}</span>`).join(' ') || '—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn sm ghost" onclick='abrirPetForm(${JSON.stringify(p)})'>Editar</button>
+        <button class="btn sm danger" onclick="excluirPet(${p.id}, '${p.nome.replace(/'/g, "\\'")}')">Excluir</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function carregarTutores() {
+  tutoresCache = await api('/tutores');
+  const body = document.getElementById('tutores-body');
+  if (!tutoresCache.length) { body.innerHTML = '<tr><td colspan="6" class="empty">Nenhum tutor cadastrado.</td></tr>'; return; }
+  body.innerHTML = tutoresCache.map(t => `
+    <tr>
+      <td><strong>${t.nome}</strong></td>
+      <td>${t.cpf || '—'}</td><td>${t.telefone || '—'}</td><td>${t.email || '—'}</td>
+      <td><span class="badge">${t.totalPets}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn sm ghost" onclick='abrirTutorForm(${JSON.stringify(t)})'>Editar</button>
+        <button class="btn sm danger" onclick="excluirTutor(${t.id}, '${t.nome.replace(/'/g, "\\'")}')">Excluir</button>
+      </td>
+    </tr>`).join('');
+}
+
+function debounceBusca() { clearTimeout(buscaTimer); buscaTimer = setTimeout(carregarPets, 300); }
+
+function abrirPetForm(p) {
+  document.getElementById('dlg-pet-title').textContent = p ? 'Editar Pet' : 'Novo Pet';
+  document.getElementById('pet-id').value = p?.id ?? '';
+  document.getElementById('pet-nome').value = p?.nome ?? '';
+  document.getElementById('pet-especie').value = p?.especie ?? 'Cachorro';
+  document.getElementById('pet-sexo').value = p?.sexo ?? 'Macho';
+  document.getElementById('pet-raca').value = p?.raca ?? '';
+  document.getElementById('pet-cor').value = p?.cor ?? '';
+  document.getElementById('pet-nasc').value = p?.dataNascimento ?? '';
+  document.getElementById('pet-peso').value = p?.pesoKg ?? '';
+  document.getElementById('pet-chip').value = p?.microchip ?? '';
+  const sel = document.getElementById('pet-tutor');
+  sel.innerHTML = tutoresCache.map(t => `<option value="${t.id}">${t.nome}</option>`).join('');
+  if (p) sel.value = p.tutorId;
+  dlgPet.showModal();
+}
+
+document.getElementById('form-pet').addEventListener('submit', async () => {
+  const id = document.getElementById('pet-id').value;
+  const body = JSON.stringify({
+    nome: document.getElementById('pet-nome').value,
+    especie: document.getElementById('pet-especie').value,
+    sexo: document.getElementById('pet-sexo').value,
+    raca: document.getElementById('pet-raca').value,
+    cor: document.getElementById('pet-cor').value,
+    dataNascimento: document.getElementById('pet-nasc').value || null,
+    pesoKg: parseFloat(document.getElementById('pet-peso').value || '0'),
+    microchip: document.getElementById('pet-chip').value || null,
+    fotoUrl: null,
+    tutorId: parseInt(document.getElementById('pet-tutor').value)
+  });
+  await api(id ? `/pets/${id}` : '/pets', { method: id ? 'PUT' : 'POST', body });
+  atualizarTudo();
+});
+
+async function excluirPet(id, nome) {
+  if (!confirm(`Excluir o pet "${nome}"?`)) return;
+  await api(`/pets/${id}`, { method: 'DELETE' });
+  atualizarTudo();
+}
+
+function abrirTutorForm(t) {
+  document.getElementById('dlg-tutor-title').textContent = t ? 'Editar Tutor' : 'Novo Tutor';
+  document.getElementById('tutor-id').value = t?.id ?? '';
+  document.getElementById('tutor-nome').value = t?.nome ?? '';
+  document.getElementById('tutor-cpf').value = t?.cpf ?? '';
+  document.getElementById('tutor-tel').value = t?.telefone ?? '';
+  document.getElementById('tutor-email').value = t?.email ?? '';
+  document.getElementById('tutor-end').value = t?.endereco ?? '';
+  dlgTutor.showModal();
+}
+
+document.getElementById('form-tutor').addEventListener('submit', async () => {
+  const id = document.getElementById('tutor-id').value;
+  const body = JSON.stringify({
+    nome: document.getElementById('tutor-nome').value,
+    cpf: document.getElementById('tutor-cpf').value,
+    telefone: document.getElementById('tutor-tel').value,
+    email: document.getElementById('tutor-email').value,
+    endereco: document.getElementById('tutor-end').value
+  });
+  await api(id ? `/tutores/${id}` : '/tutores', { method: id ? 'PUT' : 'POST', body });
+  atualizarTudo();
+});
+
+async function excluirTutor(id, nome) {
+  if (!confirm(`Excluir o tutor "${nome}" e todos os seus pets?`)) return;
+  await api(`/tutores/${id}`, { method: 'DELETE' });
+  atualizarTudo();
+}
+
+function atualizarTudo() { carregarDashboard(); carregarPets(); carregarTutores(); }
+atualizarTudo();
+</script>
+</body>
+</html>
