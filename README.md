@@ -9,12 +9,12 @@ Sistema de cadastro e gestão de pets em uma única solution .NET, com API REST,
 ### Portal Web (HTML + API REST)
 ![Portal web com dashboard e listagem de pets](docs/images/web-portal.png)
 
-### App Mobile (.NET MAUI — Android)
-| Lista (emulador) | Cadastro | Tema escuro (dispositivo físico) |
-|---|---|---|
-| ![Lista de pets](docs/images/mobile-lista.png) | ![Formulário de cadastro](docs/images/mobile-form.png) | ![Tema escuro](docs/images/mobile-dark-device.png) |
+### App Mobile (.NET MAUI — Android e iOS)
+| Android (emulador) | Cadastro | Tema escuro (dispositivo físico) | iOS (simulador) |
+|---|---|---|---|
+| ![Lista de pets](docs/images/mobile-lista.png) | ![Formulário de cadastro](docs/images/mobile-form.png) | ![Tema escuro](docs/images/mobile-dark-device.png) | ![iOS](docs/images/mobile-ios.png) |
 
-*Imagens reais da aplicação rodando: portal em `localhost:5155`, app em emulador Pixel 8 Pro (API 35) e em um Moto G(9) Play físico — todos consumindo a mesma API.*
+*Imagens reais da aplicação rodando: portal em `localhost:5155`, app em emulador Pixel 8 Pro (API 35), em um Moto G(9) Play físico e no simulador de iPhone 16 Pro — todos consumindo a mesma API, com a mesma base de código C#.*
 
 ## Estrutura
 
@@ -74,9 +74,16 @@ dotnet build src/PetLovers.Mobile -f net10.0-android -t:Run -p:AdbTarget="-s emu
 adb -s <SERIAL> reverse tcp:5155 tcp:5155   # refazer a cada reconexão do USB
 dotnet build src/PetLovers.Mobile -f net10.0-android -t:Run -p:AdbTarget="-s <SERIAL>"
 
-# iOS (requer Mac + Xcode)
+# iOS (requer Mac + Xcode) — compile primeiro, depois lance no simulador
+dotnet build src/PetLovers.Mobile -f net10.0-ios
 dotnet build src/PetLovers.Mobile -f net10.0-ios -t:Run
 ```
+
+> **Dica (iOS):** se o seu Xcode for mais novo que o exigido pelo workload MAUI
+> (erro "requires Xcode X.Y"), rode `dotnet workload update` para alinhar as versões
+> ou adicione `-p:ValidateXcodeVersion=false` aos comandos acima (seguro para
+> diferenças de versão minor). Para escolher o simulador:
+> `-p:_DeviceName=:v2:udid=<UDID>` (liste os UDIDs com `xcrun simctl list devices`).
 A detecção é automática (`DeviceInfo.DeviceType == Virtual` → emulador). Use `adb devices` para obter o serial. Com múltiplos dispositivos conectados, `-p:AdbTarget` escolhe o alvo.
 
 ### 3. Testes
