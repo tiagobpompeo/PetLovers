@@ -143,11 +143,43 @@ git remote add origin https://dev.azure.com/SUA_ORG/SEU_PROJETO/_git/PetLovers
 git push -u origin main
 ```
 
+## Segurança e escopo
+
+Este é um **MVP de demonstração**, feito para exercitar a stack ponta a ponta.
+O repositório é público de forma consciente: não há nada sensível nele.
+
+**O que já segue boa prática:**
+
+| Item | Como está |
+|---|---|
+| Credenciais | A connection string fica em **user-secrets**, fora do repositório. Nenhuma senha jamais foi commitada (verificado em todo o histórico). |
+| SQL injection | Protegido: o EF Core parametriza todas as consultas — nenhuma concatenação de SQL. |
+| Banco de dados | O arquivo `.db` está no `.gitignore`; nenhum dado real é versionado. |
+| Dados de exemplo | Tutores, CPFs e pets do seed são **fictícios**. |
+| `.gitignore` | Bloqueia `.env`, `secrets.json`, `*.pfx`, `*.key`, `*.db` e configurações locais. |
+
+**O que faltaria para ir a produção** (deliberadamente fora do escopo deste MVP):
+
+| Lacuna | Por que importa |
+|---|---|
+| Sem autenticação/autorização | Todos os endpoints são abertos — qualquer um pode criar, editar e excluir. |
+| CORS `AllowAnyOrigin` | Qualquer site poderia consumir a API. Em produção, restringir às origens conhecidas. |
+| Swagger sempre exposto | Deveria ficar restrito a ambientes de desenvolvimento. |
+| Sem rate limiting | Nada impede abuso por volume de requisições. |
+| Página de erro detalhada | O ambiente de desenvolvimento retorna stack traces — vazamento de detalhes internos se exposto. |
+| `TrustServerCertificate=True` | Aceita certificado do SQL Server sem validar; aceitável só em container local. |
+| `usesCleartextTraffic="true"` (Android) | Permite HTTP sem TLS — necessário para o túnel local de desenvolvimento, mas inaceitável num app publicado. |
+
+> ⚠️ **Não use este projeto como base de produção sem endereçar a tabela acima.**
+> Ele demonstra arquitetura, integração entre camadas e as tecnologias da stack —
+> não hardening de segurança.
+
 ## Próximos passos (fora do MVP)
 
-- Autenticação JWT / Identity
+- Autenticação JWT / Identity e autorização por perfil
+- CORS restrito, rate limiting e Swagger apenas em desenvolvimento
 - Upload de fotos dos pets
 - Agendamentos (consultas, banho/tosa) com lembretes
-- Migrations do EF Core (hoje usa `EnsureCreated`)
 - FluentValidation e Serilog
+- Testes de integração (API + banco) e E2E com Playwright/Appium
 - Pipeline de publicação (CD) para Azure App Service e lojas mobile
