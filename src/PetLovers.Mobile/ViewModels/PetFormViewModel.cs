@@ -22,9 +22,9 @@ public partial class PetFormViewModel(ApiService api) : ObservableObject
     [ObservableProperty] private DateTime _dataNascimento = DateTime.Today;
     [ObservableProperty] private string _pesoKg = string.Empty;
     [ObservableProperty] private string _microchip = string.Empty;
-    [ObservableProperty] private TutorDto? _tutorSelecionado;
+    [ObservableProperty] private Tutor? _tutorSelecionado;
 
-    public ObservableCollection<TutorDto> Tutores { get; } = [];
+    public ObservableCollection<Tutor> Tutores { get; } = [];
 
     [RelayCommand]
     private async Task InicializarAsync()
@@ -69,7 +69,7 @@ public partial class PetFormViewModel(ApiService api) : ObservableObject
         }
 
         decimal.TryParse(PesoKg, out var peso);
-        var input = new PetInput(
+        var input = new PetForm(
             Nome, Especie, Raca, Sexo,
             DateOnly.FromDateTime(DataNascimento), Cor, peso,
             string.IsNullOrWhiteSpace(Microchip) ? null : Microchip,

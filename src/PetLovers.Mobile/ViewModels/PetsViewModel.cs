@@ -10,9 +10,9 @@ public partial class PetsViewModel(ApiService api) : ObservableObject
 {
     [ObservableProperty] private bool _carregando;
     [ObservableProperty] private string _busca = string.Empty;
-    [ObservableProperty] private DashboardDto? _dashboard;
+    [ObservableProperty] private Dashboard? _dashboard;
 
-    public ObservableCollection<PetDto> Pets { get; } = [];
+    public ObservableCollection<Pet> Pets { get; } = [];
 
     [RelayCommand]
     private async Task CarregarAsync()
@@ -40,10 +40,10 @@ public partial class PetsViewModel(ApiService api) : ObservableObject
     private Task NovoPetAsync() => Shell.Current.GoToAsync("petform");
 
     [RelayCommand]
-    private Task EditarPetAsync(PetDto pet) => Shell.Current.GoToAsync($"petform?petId={pet.Id}");
+    private Task EditarPetAsync(Pet pet) => Shell.Current.GoToAsync($"petform?petId={pet.Id}");
 
     [RelayCommand]
-    private async Task ExcluirPetAsync(PetDto pet)
+    private async Task ExcluirPetAsync(Pet pet)
     {
         var confirma = await Shell.Current.DisplayAlert("Excluir", $"Excluir o pet \"{pet.Nome}\"?", "Sim", "Não");
         if (!confirma) return;

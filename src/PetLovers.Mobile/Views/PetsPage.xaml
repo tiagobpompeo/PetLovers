@@ -42,7 +42,7 @@
                     <Label Text="Nenhum pet encontrado." HorizontalOptions="Center" TextColor="#6b7f78" Margin="0,40"/>
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="m:PetDto">
+                    <DataTemplate x:DataType="m:Pet">
                         <SwipeView>
                             <SwipeView.RightItems>
                                 <SwipeItems>
@@ -62,6 +62,8 @@
                                     <VerticalStackLayout Grid.Column="1" Spacing="2">
                                         <Label Text="{Binding Nome}" FontAttributes="Bold" FontSize="16" TextColor="#1a2b26"/>
                                         <Label Text="{Binding Subtitulo}" FontSize="12" TextColor="#6b7f78"/>
+                                        <Label Text="{Binding AlertaVacinas}" IsVisible="{Binding TemAlerta}"
+                                               FontSize="11" TextColor="#b7791f"/>
                                     </VerticalStackLayout>
                                     <Label Grid.Column="2" Text="{Binding PesoKg, StringFormat='{0} kg'}"
                                            FontSize="12" TextColor="#0d7a5f" VerticalOptions="Center"/>

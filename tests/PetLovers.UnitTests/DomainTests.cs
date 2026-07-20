@@ -47,4 +47,32 @@ public class DomainTests
         var vacina = new Vacina { ProximaDose = null };
         Assert.False(vacina.EstaPendente(Hoje));
     }
+
+    [Fact]
+    public void DiasAtraso_VacinaVencida_ContaOsDias()
+    {
+        var vacina = new Vacina { ProximaDose = Hoje.AddDays(-10) };
+        Assert.Equal(10, vacina.DiasAtraso(Hoje));
+    }
+
+    [Fact]
+    public void DiasAtraso_VenceHoje_RetornaZero()
+    {
+        var vacina = new Vacina { ProximaDose = Hoje };
+        Assert.Equal(0, vacina.DiasAtraso(Hoje));
+    }
+
+    [Fact]
+    public void DiasAtraso_DoseFutura_RetornaNull()
+    {
+        var vacina = new Vacina { ProximaDose = Hoje.AddMonths(3) };
+        Assert.Null(vacina.DiasAtraso(Hoje));
+    }
+
+    [Fact]
+    public void DiasAtraso_SemProximaDose_RetornaNull()
+    {
+        var vacina = new Vacina { ProximaDose = null };
+        Assert.Null(vacina.DiasAtraso(Hoje));
+    }
 }

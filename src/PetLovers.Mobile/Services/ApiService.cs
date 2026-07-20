@@ -17,25 +17,25 @@ public class ApiService
         _http = new HttpClient { BaseAddress = new Uri(baseUrl) };
     }
 
-    public Task<List<PetDto>?> GetPetsAsync(string? busca = null) =>
-        _http.GetFromJsonAsync<List<PetDto>>(
+    public Task<List<Pet>?> GetPetsAsync(string? busca = null) =>
+        _http.GetFromJsonAsync<List<Pet>>(
             string.IsNullOrWhiteSpace(busca) ? "/api/pets" : $"/api/pets?busca={Uri.EscapeDataString(busca)}");
 
-    public Task<PetDto?> GetPetAsync(int id) =>
-        _http.GetFromJsonAsync<PetDto>($"/api/pets/{id}");
+    public Task<Pet?> GetPetAsync(int id) =>
+        _http.GetFromJsonAsync<Pet>($"/api/pets/{id}");
 
-    public async Task CreatePetAsync(PetInput input) =>
+    public async Task CreatePetAsync(PetForm input) =>
         (await _http.PostAsJsonAsync("/api/pets", input)).EnsureSuccessStatusCode();
 
-    public async Task UpdatePetAsync(int id, PetInput input) =>
+    public async Task UpdatePetAsync(int id, PetForm input) =>
         (await _http.PutAsJsonAsync($"/api/pets/{id}", input)).EnsureSuccessStatusCode();
 
     public async Task DeletePetAsync(int id) =>
         (await _http.DeleteAsync($"/api/pets/{id}")).EnsureSuccessStatusCode();
 
-    public Task<List<TutorDto>?> GetTutoresAsync() =>
-        _http.GetFromJsonAsync<List<TutorDto>>("/api/tutores");
+    public Task<List<Tutor>?> GetTutoresAsync() =>
+        _http.GetFromJsonAsync<List<Tutor>>("/api/tutores");
 
-    public Task<DashboardDto?> GetDashboardAsync() =>
-        _http.GetFromJsonAsync<DashboardDto>("/api/dashboard");
+    public Task<Dashboard?> GetDashboardAsync() =>
+        _http.GetFromJsonAsync<Dashboard>("/api/dashboard");
 }

@@ -13,10 +13,10 @@ public record PetDto(
         p.DataNascimento, p.IdadeEmAnos(hoje), p.Cor, p.PesoKg,
         p.Microchip, p.FotoUrl,
         p.TutorId, p.Tutor?.Nome ?? "",
-        p.Vacinas.Select(v => new VacinaDto(v.Id, v.Nome, v.DataAplicacao, v.ProximaDose, v.EstaPendente(hoje))).ToList());
+        p.Vacinas.Select(v => new VacinaDto(v.Id, v.Nome, v.DataAplicacao, v.ProximaDose, v.EstaPendente(hoje), v.DiasAtraso(hoje))).ToList());
 }
 
-public record VacinaDto(int Id, string Nome, DateOnly DataAplicacao, DateOnly? ProximaDose, bool Pendente);
+public record VacinaDto(int Id, string Nome, DateOnly DataAplicacao, DateOnly? ProximaDose, bool Pendente, int? DiasAtraso);
 
 public record PetInput(
     string Nome, Especie Especie, string? Raca, Sexo Sexo,
