@@ -75,4 +75,26 @@ public class DomainTests
         var vacina = new Vacina { ProximaDose = null };
         Assert.Null(vacina.DiasAtraso(Hoje));
     }
+    
+    
+    [Fact]
+    public void EhFilhote_PetComMenosDeUmAno_RetornaTrue()
+    {
+        var pet = new Pet { DataNascimento = Hoje.AddMonths(-4) };
+        Assert.True(pet.EhFilhote(Hoje));
+    }
+
+    [Fact]
+    public void EhFilhote_PetAdulto_RetornaFalse()
+    {
+        var pet = new Pet { DataNascimento = new DateOnly(2023, 7, 10) };
+        Assert.False(pet.EhFilhote(Hoje));
+    }
+
+    [Fact]
+    public void EhFilhote_SemDataNascimento_RetornaFalse()
+    {
+        var pet = new Pet();
+        Assert.False(pet.EhFilhote(Hoje));
+    }
 }

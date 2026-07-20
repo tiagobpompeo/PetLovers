@@ -28,4 +28,6 @@ public class Pet
         if (DataNascimento.Value > hoje.AddYears(-idade)) idade--;
         return idade < 0 ? 0 : idade;
     }
+    
+    public bool EhFilhote(DateOnly hoje) => IdadeEmAnos(hoje) is int i && i < 1;
 }
