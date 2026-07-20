@@ -15,13 +15,13 @@ namespace PetLovers.Infrastructure.Migrations
                 name: "Tutores",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
-                    Cpf = table.Column<string>(type: "TEXT", maxLength: 14, nullable: false),
-                    Telefone = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Endereco = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Cpf = table.Column<string>(type: "nvarchar(14)", maxLength: 14, nullable: false),
+                    Telefone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Endereco = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,18 +32,18 @@ namespace PetLovers.Infrastructure.Migrations
                 name: "Pets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Especie = table.Column<int>(type: "INTEGER", nullable: false),
-                    Raca = table.Column<string>(type: "TEXT", nullable: false),
-                    Sexo = table.Column<int>(type: "INTEGER", nullable: false),
-                    DataNascimento = table.Column<DateOnly>(type: "TEXT", nullable: true),
-                    Cor = table.Column<string>(type: "TEXT", nullable: false),
-                    PesoKg = table.Column<decimal>(type: "TEXT", precision: 6, scale: 2, nullable: false),
-                    Microchip = table.Column<string>(type: "TEXT", nullable: true),
-                    FotoUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    TutorId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Especie = table.Column<int>(type: "int", nullable: false),
+                    Raca = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sexo = table.Column<int>(type: "int", nullable: false),
+                    DataNascimento = table.Column<DateOnly>(type: "date", nullable: true),
+                    Cor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PesoKg = table.Column<decimal>(type: "decimal(6,2)", precision: 6, scale: 2, nullable: false),
+                    Microchip = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TutorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,12 +60,12 @@ namespace PetLovers.Infrastructure.Migrations
                 name: "Vacinas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    DataAplicacao = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    ProximaDose = table.Column<DateOnly>(type: "TEXT", nullable: true),
-                    PetId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DataAplicacao = table.Column<DateOnly>(type: "date", nullable: false),
+                    ProximaDose = table.Column<DateOnly>(type: "date", nullable: true),
+                    PetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

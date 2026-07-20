@@ -34,7 +34,7 @@ PetLovers.slnx
 
 | Para rodar | Precisa de |
 |---|---|
-| API + site web | Apenas o [.NET 10 SDK](https://dotnet.microsoft.com/download) |
+| API + site web | [.NET 10 SDK](https://dotnet.microsoft.com/download) + Docker (SQL Server) — ou só o SDK, usando SQLite |
 | App Android | Workload MAUI (`dotnet workload install maui`) + Android SDK (instalado junto com o Android Studio) |
 | App iOS | Mac com Xcode |
 | SQL Server | Opcional — por padrão usa SQLite local, zero configuração |
@@ -50,16 +50,38 @@ dotnet run --project src/PetLovers.API --launch-profile http
 - Portal web: http://localhost:5155
 - Swagger: http://localhost:5155/swagger
 
-O banco SQLite é criado e populado automaticamente (seed com dados fictícios) na primeira execução — **não há nenhum passo manual de banco de dados**.
+O schema e os dados de exemplo são criados automaticamente na inicialização — **não há passo manual de banco de dados**.
 
 ### Banco de dados
 
-Por padrão usa **SQLite** (`petlovers.db`). Para usar **SQL Server**, em
-`src/PetLovers.API/appsettings.json` defina:
+O projeto suporta dois provedores, alternados por `Database:UseSqlServer` em
+`src/PetLovers.API/appsettings.json`.
 
-```json
-"Database": { "UseSqlServer": true },
-"ConnectionStrings": { "SqlServer": "Server=...;Database=PetLovers;..." }
+**SQL Server (padrão)** — sobe em container e o schema é aplicado por *migrations*:
+
+```bash
+docker run -d --name petlovers-sql --platform linux/amd64 \
+  -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=SUA_SENHA_FORTE" \
+  -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
+
+dotnet user-secrets set "ConnectionStrings:SqlServer" \
+  "Server=localhost,1433;Database=PetLovers;User Id=sa;Password=SUA_SENHA_FORTE;TrustServerCertificate=True" \
+  --project src/PetLovers.API
+```
+
+> A connection string fica em **user-secrets** (fora do repositório) — nunca commite senhas.
+> No Apple Silicon, `--platform linux/amd64` é necessário: o SQL Server não tem imagem ARM nativa.
+
+**SQLite (demo rápida, sem Docker)** — defina `"UseSqlServer": false`; o arquivo
+`petlovers.db` é criado via `EnsureCreated()` na primeira execução.
+
+### Migrations
+
+As migrations são **específicas do provedor** (o SQL Server usa `nvarchar`/`Identity`;
+o SQLite usa `TEXT`/`Autoincrement`). As atuais são de SQL Server:
+
+```bash
+dotnet ef migrations add <Nome> --project src/PetLovers.Infrastructure --startup-project src/PetLovers.API
 ```
 
 ### 2. App Mobile (.NET MAUI)

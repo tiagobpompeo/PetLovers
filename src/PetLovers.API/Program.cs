@@ -25,10 +25,17 @@ builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAn
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// EF.IsDesignTime evita que este bloco rode durante os comandos "dotnet ef".
+if (!EF.IsDesignTime)
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<PetDbContext>();
-    db.Database.EnsureCreated();
+    // SQL Server: aplica as migrations versionadas (como em produção).
+    // SQLite: cria o schema direto, para uma demo rápida sem Docker.
+    if (useSqlServer)
+        db.Database.Migrate();
+    else
+        db.Database.EnsureCreated();
     DbSeeder.Seed(db);
 }
 

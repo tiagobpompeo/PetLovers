@@ -9,3 +9,11 @@ obj/
 .DS_Store
 .claude/
 PROFESSOR-PROMPT.md
+
+# Segredos e credenciais (a connection string real fica em user-secrets)
+.env
+*.env
+secrets.json
+appsettings.*.Local.json
+*.pfx
+*.key
