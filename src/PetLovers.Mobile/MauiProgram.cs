@@ -19,6 +19,8 @@ public static class MauiProgram
 			});
 
 		builder.Services.AddSingleton<IApiService, ApiService>();
+		builder.Services.AddSingleton<INavigationService, MauiNavigationService>();
+		builder.Services.AddSingleton<IDialogService, MauiDialogService>();
 		builder.Services.AddTransient<PetsViewModel>();
 		builder.Services.AddTransient<PetFormViewModel>();
 		builder.Services.AddTransient<PetsPage>();

@@ -6,7 +6,7 @@ using PetLovers.Mobile.Services;
 
 namespace PetLovers.Mobile.ViewModels;
 
-public partial class PetsViewModel(IApiService api) : ObservableObject
+public partial class PetsViewModel(IApiService api, INavigationService nav, IDialogService dialog) : ObservableObject
 {
     [ObservableProperty] private bool _carregando;
     [ObservableProperty] private string _busca = string.Empty;
@@ -28,7 +28,7 @@ public partial class PetsViewModel(IApiService api) : ObservableObject
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Erro", $"Falha ao carregar: {ex.Message}", "OK");
+            await dialog.AlertAsync("Erro", $"Falha ao carregar: {ex.Message}", "OK");
         }
         finally
         {
@@ -37,15 +37,15 @@ public partial class PetsViewModel(IApiService api) : ObservableObject
     }
 
     [RelayCommand]
-    private Task NovoPetAsync() => Shell.Current.GoToAsync("petform");
+    private Task NovoPetAsync() => nav.GoToAsync("petform");
 
     [RelayCommand]
-    private Task EditarPetAsync(Pet pet) => Shell.Current.GoToAsync($"petform?petId={pet.Id}");
+    private Task EditarPetAsync(Pet pet) => nav.GoToAsync($"petform?petId={pet.Id}");
 
     [RelayCommand]
     private async Task ExcluirPetAsync(Pet pet)
     {
-        var confirma = await Shell.Current.DisplayAlert("Excluir", $"Excluir o pet \"{pet.Nome}\"?", "Sim", "Não");
+        var confirma = await dialog.ConfirmAsync("Excluir", $"Excluir o pet \"{pet.Nome}\"?", "Sim", "Não");
         if (!confirma) return;
         await api.DeletePetAsync(pet.Id);
         await CarregarAsync();

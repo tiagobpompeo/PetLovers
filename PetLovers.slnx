@@ -3,6 +3,7 @@
     <Project Path="src/PetLovers.API/PetLovers.API.csproj" />
     <Project Path="src/PetLovers.Domain/PetLovers.Domain.csproj" />
     <Project Path="src/PetLovers.Infrastructure/PetLovers.Infrastructure.csproj" />
+    <Project Path="src/PetLovers.Mobile.Core/PetLovers.Mobile.Core.csproj" />
     <Project Path="src/PetLovers.Mobile/PetLovers.Mobile.csproj" />
   </Folder>
   <Folder Name="/tests/">

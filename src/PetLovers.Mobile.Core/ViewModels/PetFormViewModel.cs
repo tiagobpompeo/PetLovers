@@ -6,8 +6,7 @@ using PetLovers.Mobile.Services;
 
 namespace PetLovers.Mobile.ViewModels;
 
-[QueryProperty(nameof(PetId), "petId")]
-public partial class PetFormViewModel(IApiService api) : ObservableObject
+public partial class PetFormViewModel(IApiService api, INavigationService nav, IDialogService dialog) : ObservableObject
 {
     public static readonly string[] Especies = ["Cachorro", "Gato", "Ave", "Roedor", "Reptil", "Outro"];
     public static readonly string[] Sexos = ["Macho", "Femea"];
@@ -59,12 +58,12 @@ public partial class PetFormViewModel(IApiService api) : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(Nome))
         {
-            await Shell.Current.DisplayAlert("Validação", "Informe o nome do pet.", "OK");
+            await dialog.AlertAsync("Validação", "Informe o nome do pet.", "OK");
             return;
         }
         if (TutorSelecionado is null)
         {
-            await Shell.Current.DisplayAlert("Validação", "Selecione um tutor.", "OK");
+            await dialog.AlertAsync("Validação", "Selecione um tutor.", "OK");
             return;
         }
 
@@ -79,14 +78,14 @@ public partial class PetFormViewModel(IApiService api) : ObservableObject
         {
             if (PetId > 0) await api.UpdatePetAsync(PetId, input);
             else await api.CreatePetAsync(input);
-            await Shell.Current.GoToAsync("..");
+            await nav.GoToAsync("..");
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Erro", $"Falha ao salvar: {ex.Message}", "OK");
+            await dialog.AlertAsync("Erro", $"Falha ao salvar: {ex.Message}", "OK");
         }
     }
 
     [RelayCommand]
-    private Task CancelarAsync() => Shell.Current.GoToAsync("..");
+    private Task CancelarAsync() => nav.GoToAsync("..");
 }

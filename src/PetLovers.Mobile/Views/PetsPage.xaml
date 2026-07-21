@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:PetLovers.Mobile.ViewModels"
-             xmlns:m="clr-namespace:PetLovers.Mobile.Models"
+             xmlns:vm="clr-namespace:PetLovers.Mobile.ViewModels;assembly=PetLovers.Mobile.Core"
+             xmlns:m="clr-namespace:PetLovers.Mobile.Models;assembly=PetLovers.Mobile.Core"
              x:Class="PetLovers.Mobile.Views.PetsPage"
              x:DataType="vm:PetsViewModel"
              Title="🐾 PetLovers">

@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PetLovers.Domain\PetLovers.Domain.csproj" />
+    <ProjectReference Include="..\..\src\PetLovers.Mobile.Core\PetLovers.Mobile.Core.csproj" />
   </ItemGroup>
 
 </Project>
