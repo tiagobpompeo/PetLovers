@@ -6,6 +6,19 @@ public class DomainTests
 {
     private static readonly DateOnly Hoje = new(2026, 7, 15);
 
+    // [Theory] roda o MESMO teste com vários conjuntos de dados.
+    // Cada [InlineData] vira um caso independente no relatório.
+    [Theory]
+    [InlineData(-4, true)]    // nasceu há 4 meses  → filhote
+    [InlineData(-11, true)]   // 11 meses           → ainda filhote
+    [InlineData(-12, false)]  // 1 ano exato        → não é mais
+    [InlineData(-36, false)]  // 3 anos             → adulto
+    public void EhFilhote_ConformeIdade(int mesesAtras, bool esperado)
+    {
+        var pet = new Pet { DataNascimento = Hoje.AddMonths(mesesAtras) };
+        Assert.Equal(esperado, pet.EhFilhote(Hoje));
+    }
+
     [Fact]
     public void IdadeEmAnos_CalculaCorretamente()
     {
