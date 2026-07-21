@@ -6,7 +6,7 @@ using PetLovers.Mobile.Services;
 
 namespace PetLovers.Mobile.ViewModels;
 
-public partial class PetsViewModel(ApiService api) : ObservableObject
+public partial class PetsViewModel(IApiService api) : ObservableObject
 {
     [ObservableProperty] private bool _carregando;
     [ObservableProperty] private string _busca = string.Empty;

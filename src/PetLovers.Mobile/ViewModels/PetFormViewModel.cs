@@ -7,7 +7,7 @@ using PetLovers.Mobile.Services;
 namespace PetLovers.Mobile.ViewModels;
 
 [QueryProperty(nameof(PetId), "petId")]
-public partial class PetFormViewModel(ApiService api) : ObservableObject
+public partial class PetFormViewModel(IApiService api) : ObservableObject
 {
     public static readonly string[] Especies = ["Cachorro", "Gato", "Ave", "Roedor", "Reptil", "Outro"];
     public static readonly string[] Sexos = ["Macho", "Femea"];

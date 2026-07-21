@@ -3,7 +3,7 @@ using PetLovers.Mobile.Models;
 
 namespace PetLovers.Mobile.Services;
 
-public class ApiService
+public class ApiService : IApiService
 {
     private readonly HttpClient _http;
 
